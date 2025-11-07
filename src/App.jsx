@@ -1,6 +1,8 @@
 import { useEffect, useState } from "react";
 import "./App.css";
 import { cities } from "./data.js";
+import { Link } from "react-router-dom";
+
 
 export default function App() {
   const [weatherData, setWeatherData] = useState([]);
@@ -59,48 +61,53 @@ export default function App() {
 
   return (
     <div className="App">
-      <h1>🌤️ Weather Dashboard</h1>
+      <div className="dashboard-container">
+        <h1>🌤️ Weather Dashboard</h1>
 
-      <div className="stats">
-        <p><strong>Average Temp:</strong> {avgTemp}°C</p>
-        <p><strong>Highest Temp:</strong> {maxTemp}°C</p>
-        <p><strong>Lowest Temp:</strong> {minTemp}°C</p>
+        <div className="stats">
+          <p><strong>Average Temp:</strong> {avgTemp}°C</p>
+          <p><strong>Highest Temp:</strong> {maxTemp}°C</p>
+          <p><strong>Lowest Temp:</strong> {minTemp}°C</p>
+        </div>
+
+        <div className="controls">
+          <input
+            type="text"
+            placeholder="Search city..."
+            value={search}
+            onChange={(e) => setSearch(e.target.value)}
+          />
+          <select value={filter} onChange={(e) => setFilter(e.target.value)}>
+            <option value="All">All Conditions</option>
+            <option value="Clear">Clear</option>
+            <option value="Partly Cloudy">Partly Cloudy</option>
+            <option value="Rainy">Rainy</option>
+            <option value="Snowy">Snowy</option>
+            <option value="Stormy">Stormy</option>
+            <option value="Foggy">Foggy</option>
+            <option value="Drizzle">Drizzle</option>
+            <option value="Showers">Showers</option>
+          </select>
+        </div>
+
+        <ul className="city-list">
+          {filtered.map((c) => (
+            <li key={c.name} className="city-item">
+              <Link to={`/city/${encodeURIComponent(c.name)}`} className="link">
+                <div className="info">
+                  <h3>{c.name}</h3>
+                  <p>{getCondition(c.weathercode)}</p>
+                </div>
+                <div className="metrics">
+                  <p>🌡 {c.temperature}°C</p>
+                  <p>💨 {c.windspeed} km/h</p>
+                </div>
+              </Link>
+            </li>
+          ))}
+        </ul>
+
       </div>
-
-      <div className="controls">
-        <input
-          type="text"
-          placeholder="Search city..."
-          value={search}
-          onChange={(e) => setSearch(e.target.value)}
-        />
-        <select value={filter} onChange={(e) => setFilter(e.target.value)}>
-          <option value="All">All Conditions</option>
-          <option value="Clear">Clear</option>
-          <option value="Partly Cloudy">Partly Cloudy</option>
-          <option value="Rainy">Rainy</option>
-          <option value="Snowy">Snowy</option>
-          <option value="Stormy">Stormy</option>
-          <option value="Foggy">Foggy</option>
-          <option value="Drizzle">Drizzle</option>
-          <option value="Showers">Showers</option>
-        </select>
-      </div>
-
-      <ul className="city-list">
-        {filtered.map((c) => (
-          <li key={c.name} className="city-item">
-            <div className="info">
-              <h3>{c.name}</h3>
-              <p>{getCondition(c.weathercode)}</p>
-            </div>
-            <div className="metrics">
-              <p>🌡 {c.temperature}°C</p>
-              <p>💨 {c.windspeed} km/h</p>
-            </div>
-          </li>
-        ))}
-      </ul>
     </div>
   );
 }
